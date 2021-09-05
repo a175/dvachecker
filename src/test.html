@@ -1,0 +1,87 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script type="text/javascript" src="./dva.js"> </script>
+  <script type="text/javascript">
+    function start_script(){
+	var v,l;
+	var unit;
+	v=1.0;
+	v=0.025;
+	l=500.0; 
+	unit="mm";
+	c=5*l*Math.tan(Math.PI/(10800*v))
+
+	
+	boardroot=document.getElementById("viewbox");
+	boardroot.style.position="static";
+
+
+	image=document.getElementById("targetimg");
+	image.style.width=c+unit;
+	image.style.position="absolute";
+	image.style.left="0mm";
+	image.style.padding="0mm";
+
+	simage=document.getElementById("startimg");
+	simage.style.position="absolute";
+	simage.style.width=c+unit;
+	simage.style.padding="0mm";
+
+	timage=document.getElementById("terminalimg");
+	timage.style.width=10000*c+unit;
+	pxperunit=(timage.clientWidth)/(c*10000)
+	timage.style.width=c+unit;
+	timage.style.position="absolute";
+	timage.style.padding="0mm";
+
+	
+	startposition=0
+	simage.style.left=startposition+unit;
+	
+	endposition=Math.floor((boardroot.clientWidth-image.offsetWidth)/pxperunit)
+	timage.style.left=endposition+unit;
+
+	rpm = 49
+	vel= 2*Math.PI*rpm/60; //[rad/s]
+	dt=1000*2*Math.atan((endposition-startposition)/(l*2))/vel //[ms]
+	animate(image,dt,startposition+unit,endposition+unit);
+    }
+    a=10
+    function update_image_position(image,dt,s,t){
+	image.style.transitionTimingFunction="linear";
+	if(image.style.left == t){
+	    image.style.transitionDuration="0s";
+	    image.style.left = s;
+
+	}else{
+	    image.style.transitionDuration=dt+"ms";
+	    image.style.left = t;
+	}
+	a=-a;
+    }
+    function animate(image,dt,s,t){
+	image.style.left = s;
+	image.style.willChange='left';
+	if(dt<500){
+	    interval = 1000
+	}else{
+	    interval = dt
+	}
+	setInterval(function(){update_image_position(image,dt,s,t);},interval)
+    }
+  </script>
+  <title>DVA</title>
+</head>
+<body onLoad="start_script();">
+  <div id="viewbox">
+    <img src="lr/2.svg" id="targetimg">
+    <img src="lr/base.svg" id="startimg">
+    <img src="lr/base.svg" id="terminalimg">
+  </div>
+  <div id="controlebox"></div>
+</body>
+</html>
+
+
+
